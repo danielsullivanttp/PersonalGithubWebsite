@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DanSull PC & Mac Repair – Portfolio</title>
+
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #161b22;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+        }
+
+        /* PROJECT CARD STYLING */
+        .project-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .project-card h3 {
+            margin-top: 0;
+        }
+
+        .project-links a {
+            display: inline-block;
+            margin-right: 15px;
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .project-links a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #8b949e;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>DanSull PC & Mac Repair – Coding Portfolio</h1>
+</header>
+
+<main>
+    <section id="projects">
+        <h2>Projects</h2>
+        <div id="project-list">Loading projects...</div>
+    </section>
+</main>
+
+<footer>
+    © 2026 DanSull PC & Mac Repair & Design
+</footer>
+
+<script>
+async function loadProjects() {
+    const username = "DanSullPCAndMacRepairAndDesign";
+    const repo = "YOUR_REPO_NAME";  // ← CHANGE THIS ONCE
+    const folder = "projects";
+
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folder}`;
+    const container = document.getElementById("project-list");
+
+    try {
+        const response = await fetch(apiUrl);
+        const items = await response.json();
+
+        container.innerHTML = "";
+
+        for (const item of items) {
+            if (item.type === "dir") {
+                const metadataUrl =
+                    `https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${item.name}/metadata.json`;
+
+                const metadataResponse = await fetch(metadataUrl);
+                if (!metadataResponse.ok) continue;
+
+                const meta = await metadataResponse.json();
+
+                const card = document.createElement("div");
+                card.className = "project-card";
+
+                card.innerHTML = `
+                    <h3>${meta.name}</h3>
+                    <p>${meta.description}</p>
+
+                    <div class="project-links">
+                        <a href="projects/${item.name}">View Code Files →</a>
+
+                        ${
+                            meta.runDemo
+                                ? `<a href="${meta.demoUrl}">Run Code Demo →</a>`
+                                : `<span style="color:#8b949e;">Demo coming soon</span>`
+                        }
+                    </div>
+                `;
+
+                container.appendChild(card);
+            }
+        }
+    } catch (err) {
+        container.innerHTML = "Could not load projects.";
+    }
+}
+
+loadProjects();
+</script>
+</body>
+</html>
